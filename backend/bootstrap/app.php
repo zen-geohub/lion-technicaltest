@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\UserIsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,10 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectGuestsTo(fn (Request $request) => null);
+        $middleware->alias([
+            'admin' => UserIsAdmin::class
+        ]);
+
+        $middleware->redirectGuestsTo(fn () => null);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
+        $exceptions->shouldRenderJsonWhen(function (Request $request) {
             if ($request->is('api/*')) {
                 return true;
             }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthService
 {
@@ -13,7 +14,7 @@ class AuthService
         $user = User::where('email', $email)->first();
 
         if (! $user || ! Hash::check($password, $user->password)) {
-            throw ValidationException::withMessage([
+            throw ValidationException::withMessages([
                 'email' => ['Invalid credentials.']
             ]);
         }
@@ -28,6 +29,9 @@ class AuthService
 
     public function logout(User $user): void
     {
-        $user->currentAccessToken()->delete();
+        /** @var PersonalAccessToken $token */
+        $token = $user->currentAccessToken();
+    
+        $token->delete();
     }
 }
