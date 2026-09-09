@@ -41,4 +41,17 @@ class FolderService
     {
         $folder->delete();
     }
+
+    public function breadcrumb(Folder $folder): array
+    {
+        $trail = [];
+        $current = $folder;
+
+        while ($current) {
+            array_unshift($trail, ['id' => $current->id, 'name' => $current->name]);
+            $current = $current->parent;
+        }
+
+        return $trail;
+    }
 }

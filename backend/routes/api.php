@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/folders', [FolderController::class, 'index']);
     Route::get('/folders/{folder}', [FolderController::class, 'show']);
+    Route::get('/folders/{folder}/breadcrumb', [FolderController::class, 'breadcrumb']);
 
     Route::middleware('admin')->group(function () {
         Route::post('/folders', [FolderController::class, 'store']);

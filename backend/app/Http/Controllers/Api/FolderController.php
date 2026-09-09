@@ -59,4 +59,9 @@ class FolderController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function breadcrumb(Folder $folder)
+    {
+        return response()->json($this->folders->breadcrumb($folder));
+    }
 }
