@@ -24,7 +24,7 @@ class File extends Model
         return $this->belongsTo(Department::class);
     }
     
-    public function uploaded()
+    public function uploader()
     {
         return $this->belongsTo(User::class, 'uploaded_by');
     }

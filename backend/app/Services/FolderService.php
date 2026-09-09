@@ -20,6 +20,8 @@ class FolderService
     {
         return $folder->load([
             'children', 
+            'files.department',
+            'files.uploader'
         ]);
     }
 
