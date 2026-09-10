@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExplorerRow, FileDetail, FileRow } from "@/components/folder";
+import { ExplorerRow, FileDetail, FileRow, FolderForm, UploadFile } from "@/components/folder";
 import Loading from "@/components/Loading.vue";
 import {
   Breadcrumb,
@@ -34,6 +34,9 @@ const breadcrumb = ref<BreadcrumbEntry[]>([]);
 
 const detailOpen = ref<boolean>(false);
 const selectedFile = ref<FileItem | null>(null);
+
+const folderDialogOpen = ref<boolean>(false);
+const editingFolder = ref<Folder | null>(null);
 
 const searchResult = ref<FileItem[] | null>(null);
 const loading = ref<boolean>(false);
@@ -120,6 +123,30 @@ function openFile(item: ExplorerItem): void {
     detailOpen.value = true;
   }
 }
+
+async function downloadFile(item: ExplorerItem): Promise<void> {
+  if (item.kind === "file") {
+    const response = await api.get(`/files/${item.data.id}/download`, {
+      responseType: "blob",
+    });
+
+    const url = URL.createObjectURL(response.data);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = item.data.original_name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function handleFolderSaved(): Promise<void> {
+  folderDialogOpen.value = false;
+  await load();
+}
 </script>
 
 <template>
@@ -164,8 +191,25 @@ function openFile(item: ExplorerItem): void {
         </Breadcrumb>
 
         <div v-if="auth.isAdmin" class="flex gap-2">
-          <Button variant="outline">New Folder</Button>
-          <Button v-if="folderPath">Upload File</Button>
+          <Button
+            variant="outline"
+            @click="
+              () => {
+                editingFolder = null;
+                folderDialogOpen = true;
+              }
+            "
+            >New Folder</Button
+          >
+          <UploadFile
+            :folder-path="folderPath"
+            :folder-id="
+              String(
+                breadcrumb.filter((crumb) => crumb.slug === folderPath.split('/').pop())[0]?.id,
+              ) ?? ''
+            "
+            @uploaded="load"
+          />
         </div>
       </div>
 
@@ -187,8 +231,18 @@ function openFile(item: ExplorerItem): void {
             v-for="item in explorerItems"
             :item="item"
             :can-manage="auth.isAdmin"
+            :load="load"
             @open="openFolder(item)"
             @view="openFile(item)"
+            @rename="
+              () => {
+                if (item.kind === 'folder') {
+                  editingFolder = item.data;
+                  folderDialogOpen = true;
+                }
+              }
+            "
+            @download="downloadFile(item)"
           />
         </div>
         <p class="text-sm text-muted-foreground text-center">
@@ -197,6 +251,15 @@ function openFile(item: ExplorerItem): void {
         </p>
       </template>
     </template>
+    <FolderForm
+      v-model:open="folderDialogOpen"
+      :folder="editingFolder"
+      :folder-id="
+        String(breadcrumb.filter((crumb) => crumb.slug === folderPath.split('/').pop())[0]?.id) ??
+        ''
+      "
+      @saved="handleFolderSaved"
+    />
     <FileDetail
       v-model:open="detailOpen"
       :file="selectedFile"

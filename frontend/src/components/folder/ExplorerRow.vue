@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DeleteItem } from "@/components/folder";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import { EllipsisVerticalIcon, FileIcon, FolderIcon } from "@lucide/vue";
 const { item } = defineProps<{
   item: ExplorerItem;
   canManage: boolean;
+  load: () => Promise<void>;
 }>();
 
 const emit = defineEmits<{
@@ -20,7 +22,6 @@ const emit = defineEmits<{
   view: [];
   download: [];
   rename: [];
-  delete: [];
 }>();
 
 function handleRowClick(): void {
@@ -75,9 +76,13 @@ function handleRowClick(): void {
           <DropdownMenuItem v-if="item.kind === 'file'" @click="emit('download')">
             Download
           </DropdownMenuItem>
-          <DropdownMenuItem class="text-destructive hover:text-destructive" @click="emit('delete')">
-            Delete
-          </DropdownMenuItem>
+          <template v-if="item.kind === 'folder'">
+            <DeleteItem :load="load" :data="item.data" kind="folder" />
+          </template>
+
+          <template v-else>
+            <DeleteItem :load="load" :data="item.data" kind="file" />
+          </template>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

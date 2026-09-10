@@ -14,7 +14,15 @@ export interface Paginated<T> {
   total: number;
 }
 
-export type ExplorerItem = { kind: "folder"; data: Folder } | { kind: "file"; data: FileItem };
+export type ExplorerItem =
+  | {
+      kind: "folder";
+      data: Folder;
+    }
+  | {
+      kind: "file";
+      data: FileItem;
+    };
 
 export interface ApiErrorResponse {
   message: string;
