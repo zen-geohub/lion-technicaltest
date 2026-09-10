@@ -21,7 +21,7 @@ const routes: readonly RouteRecordRaw[] = [
         meta: { admin: true },
       },
       {
-        path: "folders/:id?",
+        path: "folders/:pathMatch(.*)*",
         name: "folders",
         component: () => import("@/views/FolderView.vue"),
       },
