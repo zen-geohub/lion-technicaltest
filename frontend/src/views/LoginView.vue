@@ -28,6 +28,7 @@ async function handleSubmit(): Promise<void> {
     } else {
       error.value = "Login failed.";
     }
+
     toast.error("Login failed", {
       description: error.value,
     });

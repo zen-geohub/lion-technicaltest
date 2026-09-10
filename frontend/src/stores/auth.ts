@@ -1,10 +1,6 @@
 import api from "@/lib/axios";
+import type { User } from "@/types";
 import { defineStore } from "pinia";
-
-interface User {
-  name: string;
-  role: "admin" | "viewer";
-}
 
 export const useAuthStore = defineStore("auth", {
   state: (): {
@@ -16,12 +12,12 @@ export const useAuthStore = defineStore("auth", {
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.token,
-    isAdmin: (state) => state.user?.role === "admin",
+    isAuthenticated: (state): boolean => !!state.token,
+    isAdmin: (state): boolean => state.user?.role === "admin",
   },
 
   actions: {
-    async login(email: string, password: string) {
+    async login(email: string, password: string): Promise<void> {
       const { data } = await api.post("/login", { email, password });
       this.token = data.token;
       this.user = data.user;
@@ -29,7 +25,7 @@ export const useAuthStore = defineStore("auth", {
       localStorage.setItem("token", data.token);
     },
 
-    async logout() {
+    async logout(): Promise<void> {
       await api.post("/logout");
       this.token = null;
       this.user = null;
@@ -37,7 +33,7 @@ export const useAuthStore = defineStore("auth", {
       localStorage.removeItem("token");
     },
 
-    async fetchUser() {
+    async fetchUser(): Promise<void> {
       const { data } = await api.get("/me");
       this.user = data;
     },

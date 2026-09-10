@@ -3,7 +3,8 @@ import { RouterLink, RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { FolderIcon, LayoutDashboardIcon, UserRoundGroupIcon } from "@lucide/vue";
+import { FolderIcon, LayoutDashboardIcon, LogOutIcon, UserRoundGroupIcon } from "@lucide/vue";
+import Theme from "@/components/Theme.vue";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -56,7 +57,16 @@ const initials = () => auth.user?.name?.charAt(0)?.toUpperCase() || "?";
             </Avatar>
             <h1>{{ auth.user?.name }}</h1>
           </div>
-          <Button variant="outline" size="sm" @click="handleLogout">Logout</Button>
+          <div class="flex items-center gap-1">
+            <Theme />
+            <Button
+              variant="outline"
+              class="text-destructive hover:text-destructive"
+              size="icon"
+              @click="handleLogout"
+              ><LogOutIcon
+            /></Button>
+          </div>
         </div>
       </div>
     </aside>

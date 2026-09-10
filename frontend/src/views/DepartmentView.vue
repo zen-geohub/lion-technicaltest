@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 import api from "@/lib/axios";
 import { useAuthStore } from "@/stores/auth";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -28,12 +27,6 @@ async function load() {
 }
 
 onMounted(load);
-
-async function handleDelete(dept: Department) {
-  if (!confirm(`Delete department "${dept.name}"?`)) return;
-  await api.delete(`/departments/${dept.id}`);
-  await load();
-}
 </script>
 
 <template>
