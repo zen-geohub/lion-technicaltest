@@ -48,6 +48,14 @@ return Application::configure(basePath: dirname(__DIR__))
             ], 404);
         });
 
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Invalid credentials.'
+                ], 401);
+            }
+        });
+
         $exceptions->render(function (ValidationException $e, Request $request) {
             return response()->json([
                 'message' => 'Invalid payload.',

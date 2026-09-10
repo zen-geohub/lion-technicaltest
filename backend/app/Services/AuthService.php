@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -14,9 +15,7 @@ class AuthService
         $user = User::where('email', $email)->first();
 
         if (! $user || ! Hash::check($password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Invalid credentials.']
-            ]);
+            throw new AuthenticationException();
         }
 
         $token = $user->createToken('token')->plainTextToken;
