@@ -2,7 +2,7 @@ import type { Department } from "@/types/Department";
 import type { Folder } from "@/types/Folder";
 import type { User } from "@/types/User";
 
-export interface File {
+export interface FileItem {
   id: number;
   folder_id: number;
   title: string;

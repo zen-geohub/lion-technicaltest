@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExplorerRow, FileRow } from "@/components/folder";
+import { ExplorerRow, FileDetail, FileRow } from "@/components/folder";
 import Loading from "@/components/Loading.vue";
 import {
   Breadcrumb,
@@ -15,7 +15,7 @@ import { useAuthStore } from "@/stores/auth";
 import type {
   BreadcrumbEntry,
   ExplorerItem,
-  File,
+  FileItem,
   Folder,
   FolderResponse,
   Paginated,
@@ -29,10 +29,13 @@ const router = useRouter();
 const route = useRoute();
 
 const currentFolder = ref<Folder | null>(null);
-const rootFolder = ref<Folder[]>([]);
+const rootFolders = ref<Folder[]>([]);
 const breadcrumb = ref<BreadcrumbEntry[]>([]);
 
-const searchResult = ref<File[] | null>(null);
+const detailOpen = ref<boolean>(false);
+const selectedFile = ref<FileItem | null>(null);
+
+const searchResult = ref<FileItem[] | null>(null);
 const loading = ref<boolean>(false);
 const folderPath = computed<string>(() => {
   const path = route.params.pathMatch;
@@ -50,7 +53,7 @@ const handleSearch = useDebounceFn(async (value: string) => {
     return;
   }
 
-  const { data } = await api.get<Paginated<File>>("/files", {
+  const { data } = await api.get<Paginated<FileItem>>("/files", {
     params: { search: value },
   });
 
@@ -71,7 +74,7 @@ async function load(): Promise<void> {
       breadcrumb.value = [];
 
       const { data } = await api.get<Folder[]>("/folders");
-      rootFolder.value = data;
+      rootFolders.value = data;
     }
   } finally {
     loading.value = false;
@@ -84,7 +87,39 @@ watch(
   { immediate: true },
 );
 
-const explorerItems = computed<ExplorerItem[]>(() => []);
+const childFolders = computed<Folder[]>(() =>
+  folderPath.value ? (currentFolder.value?.children ?? []) : rootFolders.value,
+);
+const files = computed<FileItem[]>(() =>
+  folderPath.value ? (currentFolder.value?.files ?? []) : [],
+);
+
+const explorerItems = computed<ExplorerItem[]>(() => [
+  ...childFolders.value.map((folder): ExplorerItem => ({ kind: "folder", data: folder })),
+  ...files.value.map((file): ExplorerItem => ({ kind: "file", data: file })),
+]);
+
+function openFolder(item: ExplorerItem): void {
+  if (item.kind === "folder") {
+    const current = route.params.pathMatch;
+
+    const segments = Array.isArray(current) ? current : current ? [current] : [];
+
+    router.push({
+      name: "folders",
+      params: {
+        pathMatch: [...segments, item.data.slug],
+      },
+    });
+  }
+}
+
+function openFile(item: ExplorerItem): void {
+  if (item.kind === "file") {
+    selectedFile.value = item.data;
+    detailOpen.value = true;
+  }
+}
 </script>
 
 <template>
@@ -110,14 +145,14 @@ const explorerItems = computed<ExplorerItem[]>(() => []);
 
     <template v-else>
       <div class="flex items-center justify-between">
-        <Breadcrumb v-if="breadcrumb.length">
+        <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink as-child>
                 <RouterLink :to="{ name: 'folders' }">/</RouterLink>
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <template v-for="(crumb, i) in breadcrumb">
+            <template v-if="breadcrumb.length" v-for="(crumb, i) in breadcrumb">
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink as-child v-if="i < breadcrumb.length">
@@ -127,6 +162,11 @@ const explorerItems = computed<ExplorerItem[]>(() => []);
             </template>
           </BreadcrumbList>
         </Breadcrumb>
+
+        <div v-if="auth.isAdmin" class="flex gap-2">
+          <Button variant="outline">New Folder</Button>
+          <Button v-if="folderPath">Upload File</Button>
+        </div>
       </div>
 
       <div v-if="loading" class="w-full h-full flex items-center justify-center">
@@ -136,17 +176,20 @@ const explorerItems = computed<ExplorerItem[]>(() => []);
       <template v-else>
         <div class="border rounded-md overflow-hidden">
           <div
-            class="grid grid-cols-4 gap-3 px-3 py-2 text-xs font-medium text-muted-foreground border-b bg-muted/30"
+            class="grid grid-cols-[1fr_180px_140px_20px] gap-3 px-3 py-2 text-xs font-medium text-muted-foreground border-b bg-muted/30"
           >
             <span>Name</span>
             <span>Info</span>
             <span>Modified</span>
             <span></span>
-
-            <!-- <ExplorerRow
-              v-for="item in source"
-            /> -->
           </div>
+          <ExplorerRow
+            v-for="item in explorerItems"
+            :item="item"
+            :can-manage="auth.isAdmin"
+            @open="openFolder(item)"
+            @view="openFile(item)"
+          />
         </div>
         <p class="text-sm text-muted-foreground text-center">
           This folder is empty.
@@ -154,5 +197,12 @@ const explorerItems = computed<ExplorerItem[]>(() => []);
         </p>
       </template>
     </template>
+    <FileDetail
+      v-model:open="detailOpen"
+      :file="selectedFile"
+      :location="breadcrumb.filter((crumb) => crumb.id === selectedFile?.folder_id)[0]?.name ?? ''"
+      :can-manage="auth.isAdmin"
+      @updated="load"
+    />
   </div>
 </template>

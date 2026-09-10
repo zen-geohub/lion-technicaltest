@@ -1,4 +1,4 @@
-import type { File } from "@/types/File";
+import type { FileItem } from "@/types/File";
 
 export interface Folder {
   id: number;
@@ -9,7 +9,7 @@ export interface Folder {
   children_count?: number;
   files_count?: number;
   children?: Folder[];
-  files?: File;
+  files?: FileItem[];
   created_at: string;
   updated_at: string;
 }

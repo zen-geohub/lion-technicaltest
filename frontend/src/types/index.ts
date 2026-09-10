@@ -1,4 +1,4 @@
-import type { File } from "@/types/File";
+import type { FileItem } from "@/types/File";
 import type { Folder } from "@/types/Folder";
 
 export * from "./Department";
@@ -14,7 +14,7 @@ export interface Paginated<T> {
   total: number;
 }
 
-export type ExplorerItem = { kind: "folder"; data: Folder } | { kind: "file"; data: File };
+export type ExplorerItem = { kind: "folder"; data: Folder } | { kind: "file"; data: FileItem };
 
 export interface ApiErrorResponse {
   message: string;
