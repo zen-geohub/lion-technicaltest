@@ -9,7 +9,7 @@ class Folder extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'parent_id', 'created_by'];
+    protected $fillable = ['name', 'slug', 'parent_id', 'created_by'];
 
     public function parent()
     {

@@ -33,9 +33,13 @@ class FolderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Folder $folder)
+    public function show(string $folder)
     {
-        return $this->folders->details($folder);
+        $path = array_values(
+            array_filter(explode('/', $folder))
+        );
+
+        return $this->folders->findByPath($path);
     }
 
     /**
