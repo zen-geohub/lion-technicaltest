@@ -10,10 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import CreateDepartment from "@/components/department/CreateDepartment.vue";
-import EditDepartment from "@/components/department/EditDepartment.vue";
 import type { Department } from "@/types";
-import DeleteDepartment from "@/components/department/DeleteDepartment.vue";
+import { CreateDepartment, DeleteDepartment, EditDepartment } from "@/components/department";
 
 const auth = useAuthStore();
 const departments = ref<Department[]>([]);

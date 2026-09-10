@@ -23,6 +23,7 @@ const initials = () => auth.user?.name?.charAt(0)?.toUpperCase() || "?";
       <div class="flex flex-col gap-1">
         <h1 class="text-lg font-bold mb-4 px-2">File Management System</h1>
         <RouterLink
+          v-if="auth.isAdmin"
           :to="{ name: 'dashboard' }"
           class="flex gap-2 px-3 py-2 rounded-md text-sm hover:bg-muted hover:text-foreground"
           exact-active-class="bg-primary text-primary-foreground"

@@ -15,7 +15,7 @@ const routes: readonly RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [
       {
-        path: "",
+        path: "dashboard",
         name: "dashboard",
         component: () => import("@/views/DashboardView.vue"),
         meta: { admin: true },
