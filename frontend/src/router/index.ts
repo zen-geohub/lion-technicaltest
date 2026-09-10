@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
 
 const routes: readonly RouteRecordRaw[] = [
   {
@@ -10,21 +11,27 @@ const routes: readonly RouteRecordRaw[] = [
   },
   {
     path: "/",
-    name: "dashboard",
-    component: () => import("@/views/DashboardView.vue"),
+    component: AuthenticatedLayout,
     meta: { requiresAuth: true },
-  },
-  {
-    path: "/folders/:id?",
-    name: "folders",
-    component: () => import("@/views/FolderView.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/departments",
-    name: "departments",
-    component: () => {},
-    meta: { requiresAuth: true, admin: true },
+    children: [
+      {
+        path: "",
+        name: "dashboard",
+        component: () => import("@/views/DashboardView.vue"),
+        meta: { admin: true },
+      },
+      {
+        path: "folders/:id?",
+        name: "folders",
+        component: () => import("@/views/FolderView.vue"),
+      },
+      {
+        path: "departments",
+        name: "departments",
+        component: () => import("@/views/DepartmentView.vue"),
+        meta: { admin: true },
+      },
+    ],
   },
   {
     path: "/:catchAll(.*)",
@@ -38,8 +45,17 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
   const auth = useAuthStore();
+
+  // Rehydrate user info
+  if (auth.isAuthenticated && !auth.user) {
+    try {
+      await auth.fetchUser();
+    } catch {
+      //
+    }
+  }
 
   if (to.meta.guestOnly && auth.isAuthenticated) {
     return next({ name: "folders" });

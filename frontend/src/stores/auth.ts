@@ -2,6 +2,7 @@ import api from "@/lib/axios";
 import { defineStore } from "pinia";
 
 interface User {
+  name: string;
   role: "admin" | "viewer";
 }
 
@@ -20,13 +21,12 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
-    async login(email: string, password: string): Promise<boolean> {
+    async login(email: string, password: string) {
       const { data } = await api.post("/login", { email, password });
       this.token = data.token;
       this.user = data.user;
 
       localStorage.setItem("token", data.token);
-      return true;
     },
 
     async logout() {

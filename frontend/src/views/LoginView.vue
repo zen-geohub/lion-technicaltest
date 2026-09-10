@@ -20,11 +20,8 @@ const router = useRouter();
 
 async function handleSubmit(): Promise<void> {
   try {
-    const result = await auth.login(email.value, password.value);
+    await auth.login(email.value, password.value);
     router.push({ name: "folders" });
-    if (result) {
-      console.log(result);
-    }
   } catch (err) {
     if (axios.isAxiosError(err)) {
       error.value = err.response?.data.message;
