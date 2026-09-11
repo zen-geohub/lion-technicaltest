@@ -12,15 +12,25 @@ import {
 } from "@/components/ui/table";
 import type { Department } from "@/types";
 import { CreateDepartment, DeleteDepartment, EditDepartment } from "@/components/department";
+import PaginationControl from "@/components/PaginationControl.vue";
 
 const auth = useAuthStore();
 const departments = ref<Department[]>([]);
 const loading = ref<boolean>(true);
 
-async function load() {
+const currentPage = ref<number>(1);
+const lastPage = ref<number>(1);
+const total = ref<number>(0);
+
+async function load(page: number = 1) {
   loading.value = true;
-  const { data } = await api.get("/departments");
+  const { data } = await api.get("/departments", {
+    params: { page },
+  });
   departments.value = data.data;
+  currentPage.value = data.current_page;
+  lastPage.value = data.last_page;
+  total.value = data.total;
   loading.value = false;
 }
 
@@ -51,5 +61,12 @@ onMounted(load);
         </TableRow>
       </TableBody>
     </Table>
+
+    <PaginationControl
+      :current-page="currentPage"
+      :last-page="lastPage"
+      :total="total"
+      @change="load"
+    />
   </div>
 </template>

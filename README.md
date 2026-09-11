@@ -78,7 +78,7 @@ These were deprioritized to focus engineering time on a complete, correct core f
 ### 1. Clone and enter the repo
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/zen-geohub/lion-technicaltest.git
 cd lion-technicaltest
 ```
 

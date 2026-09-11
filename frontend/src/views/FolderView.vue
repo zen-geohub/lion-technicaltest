@@ -39,6 +39,7 @@ const folderDialogOpen = ref<boolean>(false);
 const editingFolder = ref<Folder | null>(null);
 
 const searchResult = ref<FileItem[] | null>(null);
+
 const loading = ref<boolean>(false);
 const folderPath = computed<string>(() => {
   const path = route.params.pathMatch;
@@ -252,6 +253,7 @@ async function handleFolderSaved(): Promise<void> {
         </p>
       </template>
     </template>
+
     <FolderForm
       v-model:open="folderDialogOpen"
       :folder="editingFolder"

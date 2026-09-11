@@ -48,6 +48,10 @@ const router = createRouter({
 router.beforeEach(async (to, _, next) => {
   const auth = useAuthStore();
 
+  if (to.path === "/") {
+    return next({ name: "folders" });
+  }
+
   // Rehydrate user info
   if (auth.isAuthenticated && !auth.user) {
     try {
