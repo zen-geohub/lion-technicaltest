@@ -36,7 +36,7 @@ const routes: readonly RouteRecordRaw[] = [
   {
     path: "/:catchAll(.*)",
     name: "not-found",
-    component: () => {},
+    component: () => import("@/views/NotFoundView.vue"),
   },
 ];
 
