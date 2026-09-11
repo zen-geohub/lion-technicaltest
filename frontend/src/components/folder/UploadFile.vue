@@ -102,7 +102,7 @@ async function handleSubmit(): Promise<void> {
 </script>
 
 <template>
-  <Button v-if="folderPath" @click="open = true">Upload File</Button>
+  <Button v-if="folderPath" class="hover:cursor-pointer" @click="open = true">Upload File</Button>
   <Dialog :open="open" @update:open="(v: boolean) => (open = v)">
     <DialogContent>
       <DialogHeader>

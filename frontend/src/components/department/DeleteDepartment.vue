@@ -14,6 +14,7 @@ import axios from "axios";
 import { ref } from "vue";
 import { toast } from "vue-sonner";
 import type { Department } from "@/types";
+import { TrashIcon } from "@lucide/vue";
 
 const { load, department } = defineProps<{
   load: () => Promise<void>;
@@ -56,8 +57,10 @@ async function handleDelete() {
         isOpen = true;
       }
     "
-    >Delete</Button
   >
+    <TrashIcon />
+    <span class="sr-only">Delete</span>
+  </Button>
   <Dialog v-model:open="isOpen">
     <DialogContent>
       <DialogHeader>

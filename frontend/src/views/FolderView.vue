@@ -192,6 +192,7 @@ async function handleFolderSaved(): Promise<void> {
 
         <div v-if="auth.isAdmin" class="flex gap-2">
           <Button
+            class="hover:cursor-pointer"
             variant="outline"
             @click="
               () => {

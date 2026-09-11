@@ -14,6 +14,7 @@ import axios from "axios";
 import { ref } from "vue";
 import { toast } from "vue-sonner";
 import type { Department } from "@/types";
+import { PencilIcon } from "@lucide/vue";
 
 const { load, department } = defineProps<{
   load: () => Promise<void>;
@@ -59,8 +60,10 @@ async function handleEdit() {
         isOpen = true;
       }
     "
-    >Edit</Button
   >
+    <PencilIcon />
+    <span class="sr-only">Edit</span>
+  </Button>
   <Dialog v-model:open="isOpen">
     <DialogContent>
       <DialogHeader>

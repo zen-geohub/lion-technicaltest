@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { File } from "@/types";
+import type { FileItem } from "@/types";
 import { DownloadIcon, FileIcon, TrashIcon } from "@lucide/vue";
 
 defineProps<{
-  file: File;
+  file: FileItem;
   canManage: boolean;
 }>();
 
@@ -28,12 +28,18 @@ defineEmits<{
 
     <div class="flex items-center gap-2">
       <Badge>{{ file.department?.name }}</Badge>
-      <Button size="icon" variant="outline" @click="$emit('download')">
+      <Button class="hover:cursor-pointer" size="icon" variant="outline" @click="$emit('download')">
         <DownloadIcon />
         <span class="sr-only">Download</span>
       </Button>
 
-      <Button v-if="canManage" size="icon" variant="destructive" @click="$emit('delete')">
+      <Button
+        v-if="canManage"
+        class="hover:cursor-pointer"
+        size="icon"
+        variant="destructive"
+        @click="$emit('delete')"
+      >
         <TrashIcon />
         <span class="sr-only">Delete</span>
       </Button>

@@ -60,7 +60,10 @@ async function handleDelete() {
 </script>
 
 <template>
-  <DropdownMenuItem class="text-destructive hover:text-destructive" @select.prevent="isOpen = true">
+  <DropdownMenuItem
+    class="text-destructive hover:text-destructive hover:cursor-pointer"
+    @select.prevent="isOpen = true"
+  >
     Delete
   </DropdownMenuItem>
   <Dialog v-model:open="isOpen">

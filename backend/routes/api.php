@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\FolderController;
@@ -45,4 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/files/{file}', [FileController::class, 'update']);
         Route::delete('/files/{file}', [FileController::class, 'destroy']);
     });
+});
+
+Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+Route::middleware('auth:sanctum')->group(function () {
 });

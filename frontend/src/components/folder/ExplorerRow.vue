@@ -65,15 +65,23 @@ function handleRowClick(): void {
     <div class="flex items-center gap-1 justify-end" @click.stop>
       <DropdownMenu v-if="canManage">
         <DropdownMenuTrigger>
-          <Button variant="ghost" size="icon-xs">
+          <Button class="hover:cursor-pointer" variant="ghost" size="icon-xs">
             <EllipsisVerticalIcon />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem v-if="item.kind === 'folder'" @click="emit('rename')">
+          <DropdownMenuItem
+            v-if="item.kind === 'folder'"
+            class="hover:cursor-pointer"
+            @click="emit('rename')"
+          >
             Rename
           </DropdownMenuItem>
-          <DropdownMenuItem v-if="item.kind === 'file'" @click="emit('download')">
+          <DropdownMenuItem
+            v-if="item.kind === 'file'"
+            class="hover:cursor-pointer"
+            @click="emit('download')"
+          >
             Download
           </DropdownMenuItem>
           <template v-if="item.kind === 'folder'">

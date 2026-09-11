@@ -24,6 +24,13 @@ export type ExplorerItem =
       data: FileItem;
     };
 
+export interface DashboardStats {
+  total_folders: number;
+  total_files: number;
+  total_departments: number;
+  latest_files: FileItem[];
+}
+
 export interface ApiErrorResponse {
   message: string;
   errors?: Record<string, string[]>;
